@@ -1,11 +1,25 @@
 package account;
 
-import account.util.Colors;
 import java.util.Scanner;
+
+import account.model.Account;
+import account.util.Colors;
 
 public class Menu {
 
 	public static void main(String[] args) {
+		
+		// Instanciamento - Classe -> Objeto Utilizavel
+		
+		// TESDE DA CLASSE CONTA
+		Account a1 = new Account(1, 001, 1, "Mary Snow", 5000.2f);	
+		
+		a1.visualize();
+		a1.withdraw(5001.2f);
+		a1.visualize();
+		a1.deposit(333.2f);
+		a1.visualize();
+		
 		int option;
 		Scanner sc = new Scanner(System.in);
 
