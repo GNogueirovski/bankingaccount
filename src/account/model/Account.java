@@ -2,7 +2,9 @@ package account.model;
 
 import account.util.Colors;
 
-public class Account {
+// Classe Abstrata / Superclasse => Base para criar outras Classes
+
+public abstract class Account {
 	// Atributos - Variáveis
 	private int number;
 	private int agency;
@@ -67,7 +69,6 @@ public class Account {
 	public boolean withdraw(float value) {
 		// If pra se o saldo for menor que o valor retornar saldo insuficiente
 		if (this.getBalance() < value) {
-			System.out.println("| Insufficient balance!                   ");
 			return false;
 		}
 		// Saque pegando saldo atual e tirando valor do usuário
@@ -79,7 +80,6 @@ public class Account {
 	public void deposit(float value) {
 		// Setando o novo saldo pegando o saldo atual e adicionando o valor do usuário
 		this.setBalance(this.getBalance() + value);
-		System.out.printf("| %.2f was added to your account!       ", value);
 
 	}
 
@@ -88,28 +88,24 @@ public class Account {
 		// switch para trocar a conta corrente de acordo com o 1 ou 2 do type
 		switch (this.type) {
 		case 1:
-			type = "Conta corrente";
+			type = "Current account";
 			break;
 
 		case 2:
-			type = "Conta poupança";
+			type = "Savings account";
 			break;
 		}
 		// print dos detalhes da conta
-		
+
 		System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND);
-		System.out.println("------------------------------------------");
-		System.out.println("|        ------------------------        |");
-		System.out.println("|        |     Account Data     |        |");
-		System.out.println("|        ------------------------        |");
-		System.out.println("|----------------------------------------|");
-		System.out.println("|----------------------------------------|");
-		System.out.printf("|   Account Number: %d                    |\n", this.number);
-		System.out.printf("|   Agency Number: %d                     |\n", this.agency);
-		System.out.printf("|   Account Type: %s         |\n", type);
-		System.out.printf("|   Account Holder: %s            |\n", this.holder);
-		System.out.printf("|   Balance: %.2f                     |\n", this.balance);
-		System.out.println("|----------------------------------------|");
+		System.out.println("\n*****************************************");
+		System.out.println("Account Data:                            ");
+		System.out.println("*****************************************");
+		System.out.printf("Account Number: %d\n", this.number);
+		System.out.printf("Agency Number: %d\n", this.agency);
+		System.out.printf("Account Type: %s\n", type);
+		System.out.printf("Account Holder: %s\n", this.holder);
+		System.out.printf("Balance: %.2f\n", this.balance);
 
 	}
 

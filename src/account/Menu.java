@@ -2,24 +2,34 @@ package account;
 
 import java.util.Scanner;
 
-import account.model.Account;
+import account.model.CurrentAccount;
+import account.model.SavingsAccount;
 import account.util.Colors;
 
 public class Menu {
 
 	public static void main(String[] args) {
-		
+
 		// Instanciamento - Classe -> Objeto Utilizavel
+
+		// TESTE 1 DA CLASSE CONTA CORRENTE
+		CurrentAccount ca1 = new CurrentAccount(1, 001, 1, "Maria Snow", 5000.0f, 10000.0f);
+
+		ca1.visualize();
+		ca1.withdraw(500.0f);
+		ca1.visualize();
+		ca1.deposit(1000.0f);
+		ca1.visualize();
+
+		SavingsAccount sa1 = new SavingsAccount(2, 001, 2, "João Wood", 10000.0f, 20);
 		
-		// TESDE DA CLASSE CONTA
-		Account a1 = new Account(1, 001, 1, "Mary Snow", 5000.2f);	
+		sa1.visualize();
+		sa1.withdraw(1000.0f);
+		sa1.visualize();
+		sa1.deposit(2000.0f);
+		sa1.visualize();
 		
-		a1.visualize();
-		a1.withdraw(5001.2f);
-		a1.visualize();
-		a1.deposit(333.2f);
-		a1.visualize();
-		
+
 		int option;
 		Scanner sc = new Scanner(System.in);
 
@@ -82,7 +92,8 @@ public class Menu {
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Deposit\n");
 				break;
 			case 8:
-				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Transfer between accounts\n");
+				System.out
+						.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Transfer between accounts\n");
 				break;
 
 			default:
@@ -90,6 +101,7 @@ public class Menu {
 				break;
 
 			}
+			sc.close();
 		}
 
 	}
