@@ -1,7 +1,10 @@
 package account;
 
+import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import account.controller.AccountController;
 import account.model.CurrentAccount;
 import account.model.SavingsAccount;
 import account.util.Colors;
@@ -9,29 +12,27 @@ import account.util.Colors;
 public class Menu {
 
 	public static void main(String[] args) {
-
-		// Instanciamento - Classe -> Objeto Utilizavel
-
-		// TESTE 1 DA CLASSE CONTA CORRENTE
-		CurrentAccount ca1 = new CurrentAccount(1, 001, 1, "Maria Snow", 5000.0f, 10000.0f);
-
-		ca1.visualize();
-		ca1.withdraw(500.0f);
-		ca1.visualize();
-		ca1.deposit(1000.0f);
-		ca1.visualize();
-
-		SavingsAccount sa1 = new SavingsAccount(2, 001, 2, "João Wood", 10000.0f, 20);
-		
-		sa1.visualize();
-		sa1.withdraw(1000.0f);
-		sa1.visualize();
-		sa1.deposit(2000.0f);
-		sa1.visualize();
-		
-
-		int option;
+		AccountController account = new AccountController();
 		Scanner sc = new Scanner(System.in);
+
+		int option, agency, type, birthday;
+		String holder;
+		float balance, limit;
+
+		// TESTING ACCOUNTS
+		CurrentAccount ca1 = new CurrentAccount(account.genNumber(), 01, 1, "João Adams", 1000f, 100.0f);
+		account.signup(ca1);
+
+		CurrentAccount ca2 = new CurrentAccount(account.genNumber(), 02, 1, "Paulo Timão ", 2000f, 100.0f);
+		account.signup(ca2);
+
+		SavingsAccount sa1 = new SavingsAccount(account.genNumber(), 03, 2, "Marcelo Porco", 3000f, 12);
+		account.signup(sa1);
+
+		SavingsAccount sa2 = new SavingsAccount(account.genNumber(), 04, 2, "Lucas Mateus", 5000f, 20);
+		account.signup(sa2);
+
+		account.listAll();
 
 		while (true) {
 			System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_GREEN_BACKGROUND);
@@ -58,7 +59,14 @@ public class Menu {
 			System.out.println("|Enter the desired option:               |");
 			System.out.println("                                          ");
 
-			option = sc.nextInt();
+			// TRYCATCH para pegar valores fora do esperado
+			try {
+				option = sc.nextInt();
+			} catch (InputMismatchException e) {
+				System.out.println("Digite um valor inteiro!");
+				sc.nextLine();
+				option = 0;
+			}
 
 			if (option == 9) {
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND
@@ -69,31 +77,82 @@ public class Menu {
 			}
 
 			switch (option) {
+			// CADASTRO CONTA
 			case 1:
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Create an account\n");
-				break;
+
+				// Informações básicas (fora do do/while)
+				System.out.println("Enter the agency number");
+				agency = sc.nextInt();
+				System.out.println("Enter the holder name:");
+				sc.skip("\\R?");
+				holder = sc.nextLine();
+
+				do {
+					System.out.println("Enter the account type (1-CA or 2-SA");
+					type = sc.nextInt();
+
+				} while (type < 1 && type > 2);
+
+				System.out.println("Enter the account balance (R$):");
+				balance = sc.nextFloat();
+
+				// SWITCH EXPRESSION para trocar os dados inseridos no cadastro da conta de
+				// acordo com type.
+
+				switch (type) {
+				case 1 -> {
+					System.out.println("Enter the credit limit (R$):");
+					limit = sc.nextFloat();
+					account.signup(new CurrentAccount(account.genNumber(), agency, type, holder, balance, limit));
+				}
+
+				case 2 -> {
+					System.out.println("Enter the account birthday:");
+					birthday = sc.nextInt();
+					account.signup(new SavingsAccount(account.genNumber(), agency, type, holder, balance, birthday));
+				}
+
+				}
+				keyPress();
+
+				// LISTAR TODAS AS CONTAS
 			case 2:
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "List all accounts\n");
+				account.listAll();
+				keyPress();
 				break;
+				// --
 			case 3:
-				System.out.println(
-						Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Consult account data – by number\n");
+				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Consult account data – by number\n");
+
+				keyPress();
 				break;
+				// --
 			case 4:
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Update account details\n");
+				keyPress();
 				break;
+				// --
 			case 5:
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Delete account\n");
+				keyPress();
 				break;
+				// --
 			case 6:
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Withdraw\n");
+				keyPress();
 				break;
+				// --
 			case 7:
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Deposit\n");
+				keyPress();
 				break;
+				// --
 			case 8:
 				System.out
 						.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Transfer between accounts\n");
+				keyPress();
 				break;
 
 			default:
@@ -101,9 +160,19 @@ public class Menu {
 				break;
 
 			}
-			sc.close();
 		}
 
+	}
+
+	// Método para acrescentar a espera da resposta do usuario
+	public static void keyPress() {
+		try {
+			System.out.println(Colors.TEXT_RESET + "\n\n Pressione Enter para continuar...");
+			System.in.read();
+		} catch (IOException e) {
+			System.out.println("Você pressionou uma tecla diferenter de Enter!");
+
+		}
 	}
 
 	public static void sobre() {
