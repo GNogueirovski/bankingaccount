@@ -29,7 +29,7 @@ public class CurrentAccount extends Account {
 
 	// Polimorfismo de Sobrescrita => add mais ou muda a lógica a um método já existente
 	public void visualize () {
-		super.visualize(); //Metodo da classe conta
+		super.visualize(); //Metodo da classe account
 		System.out.printf("Credit limit: %.2f", this.limit);
 	}
 	

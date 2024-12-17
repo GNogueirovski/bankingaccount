@@ -15,21 +15,21 @@ public class Menu {
 		AccountController account = new AccountController();
 		Scanner sc = new Scanner(System.in);
 
-		int option, agency, type, birthday;
+		int option, number, agency, type, birthday, destinyNumber;
 		String holder;
-		float balance, limit;
+		float balance, limit, value;
 
 		// TESTING ACCOUNTS
-		CurrentAccount ca1 = new CurrentAccount(account.genNumber(), 01, 1, "João Adams", 1000f, 100.0f);
+		CurrentAccount ca1 = new CurrentAccount(account.genNumber(), 1, 1, "João Adams", 1000f, 100.0f);
 		account.signup(ca1);
 
-		CurrentAccount ca2 = new CurrentAccount(account.genNumber(), 02, 1, "Paulo Timão ", 2000f, 100.0f);
+		CurrentAccount ca2 = new CurrentAccount(account.genNumber(), 2, 1, "Paulo Timão ", 2000f, 100.0f);
 		account.signup(ca2);
 
-		SavingsAccount sa1 = new SavingsAccount(account.genNumber(), 03, 2, "Marcelo Porco", 3000f, 12);
+		SavingsAccount sa1 = new SavingsAccount(account.genNumber(), 3, 2, "Marcelo Porco", 3000f, 12);
 		account.signup(sa1);
 
-		SavingsAccount sa2 = new SavingsAccount(account.genNumber(), 04, 2, "Lucas Mateus", 5000f, 20);
+		SavingsAccount sa2 = new SavingsAccount(account.genNumber(), 4, 2, "Lucas Mateus", 5000f, 20);
 		account.signup(sa2);
 
 		account.listAll();
@@ -67,10 +67,9 @@ public class Menu {
 				sc.nextLine();
 				option = 0;
 			}
-
-			if (option == 9) {
-				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND
-						+ "\nThank you for choosing Brazilian Trust Bank. Have a great day!");
+			// saída do programa caso 9 for digitado
+			if (option == 9) {	
+				System.out.println("\nThank you for choosing Brazilian Trust Bank. Have a great day!");
 				sobre();
 				sc.close();
 				System.exit(0);
@@ -88,6 +87,7 @@ public class Menu {
 				sc.skip("\\R?");
 				holder = sc.nextLine();
 
+				// do-while para que o número sera 1 ou 2, se nao for repetir
 				do {
 					System.out.println("Enter the account type (1-CA or 2-SA");
 					type = sc.nextInt();
@@ -122,36 +122,142 @@ public class Menu {
 				account.listAll();
 				keyPress();
 				break;
-				// --
+
+			// Consultar dados da conta pelo número
 			case 3:
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Consult account data – by number\n");
+				// Atribui número da conta
+				System.out.println("Enter the account number:");
+				number = sc.nextInt();
+				// chama método que busca todos os dados a partir do número
+				account.lookingForNumber(number);
 
 				keyPress();
 				break;
-				// --
+
+			// Atualiza dados da conta
 			case 4:
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Update account details\n");
+
+				System.out.println("Enter the account number:");
+				number = sc.nextInt();
+
+				// Cria variavel local que irá ser atribuida pela função de encontrar o número
+				// da conta na collection
+				var searchAccount = account.searchInCollection(number);
+
+				if (searchAccount != null) {
+					// Encontra o tipo da conta na conta procurada na collection pelo numero
+					type = searchAccount.getType();
+
+					// Atualização dados
+					System.out.println("Enter the agency number:");
+					agency = sc.nextInt();
+
+					System.out.println("Enter the holder name:");
+					sc.skip("\\R?");
+					holder = sc.nextLine();
+
+					System.out.println("Enter the account balance (R$) :");
+					balance = sc.nextFloat();
+
+					// Switch Expression para de acordo com o tipo atual da conta acrescentar
+					// limite ou a data de aniversário da conta. Depois faz update.
+					switch (type) {
+					case 1 -> {
+						System.out.println("Enter the credit limit (R$):");
+						limit = sc.nextFloat();
+
+						account.update(new CurrentAccount(number, agency, type, holder, balance, limit));
+					}
+
+					case 2 -> {
+						System.out.println("Enter the account birthday:");
+						birthday = sc.nextInt();
+
+						account.update(new SavingsAccount(number, agency, type, holder, balance, birthday));
+					}
+					default -> {
+						System.out.println("Invalid account type");
+					}
+
+					}
+					// else conta não encontrada
+				} else {
+					System.out.println("Account was not found!");
+				}
+
 				keyPress();
 				break;
-				// --
+
+			// Deletar a conta a partir do número da conta
 			case 5:
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Delete account\n");
+				System.out.println("Enter the account number:");
+				number = sc.nextInt();
+
+				// Deleta conta a partir do número de conta informado
+				account.delete(number);
+
 				keyPress();
 				break;
-				// --
+
+			// Saque a partir do número da conta
 			case 6:
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Withdraw\n");
+
+				System.out.println("Enter the account number:");
+				number = sc.nextInt();
+				// do-while para saque ser sempre superior a 0
+				do {
+					System.out.println("Enter the withdrawal amount (R$):");
+					value = sc.nextFloat();
+
+				} while (value <= 0);
+
+				// saca valor da conta
+				account.withdraw(number, value);
+
 				keyPress();
 				break;
-				// --
+
+			// Deposito na conta a partir de seu número
 			case 7:
 				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Deposit\n");
+				System.out.println("Enter the account number:");
+				number = sc.nextInt();
+
+				// do-while para deposito ser sempre superior a 0
+				do {
+					System.out.println("Enter the deposit amount (R$):");
+					value = sc.nextFloat();
+
+				} while (value <= 0);
+
+				// Deposita valor à conta
+				account.deposit(number, value);
+
 				keyPress();
 				break;
-				// --
+
+			// Transferencia de valor entre as contas origem e destino.
 			case 8:
-				System.out
-						.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Transfer between accounts\n");
+				System.out.println(Colors.TEXT_BLUE_BOLD + Colors.ANSI_YELLOW_BACKGROUND + "Transfer between accounts\n");
+
+				// conta origem
+				System.out.println("Enter the origin account number:");
+				number = sc.nextInt();
+				// conta destino
+				System.out.println("Enter the destiny account number:");
+				destinyNumber = sc.nextInt();
+
+				// do-while para transferencia ser sempre superior a 0
+				do {
+					System.out.println("Enter the transfer amount (R$):");
+					value = sc.nextFloat();
+				} while (value <= 0);
+
+				account.transfer(number, destinyNumber, value);
 				keyPress();
 				break;
 
